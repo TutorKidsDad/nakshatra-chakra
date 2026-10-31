@@ -1,0 +1,183 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nakshatra Chakra Studio v2</title><style>
+:root{font-family:Inter,system-ui,sans-serif;color-scheme:dark;--bg:#090f1e;--panel:#131e31;--line:#30415b;--text:#eaf2ff;--muted:#a2b3cd;--gold:#e9ba65}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 25% 0%,#1c3151,#090f1e 60%);color:var(--text)}header{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}h1{margin:0;font-size:24px}small,.hint{color:var(--muted)}main{display:grid;grid-template-columns:minmax(440px,1.5fr) minmax(350px,1fr);gap:16px;padding:18px;max-width:1800px;margin:auto}.panel{background:#121e30d9;border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}button,select,input{background:#1d2c44;color:var(--text);border:1px solid #415472;border-radius:8px;padding:8px;font:inherit}button{cursor:pointer}button:hover{border-color:var(--gold)}button.active{background:#725326;border-color:var(--gold)}input[type=number]{width:64px}input[type=checkbox]{accent-color:#e9ba65}#wheel{width:100%;height:auto;display:block;max-height:76vh;touch-action:none;user-select:none}.layout{display:grid;gap:16px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:6px 4px;border-bottom:1px solid #2a3b54;text-align:left}th{color:var(--muted);font-weight:600}td select{width:100%;min-width:95px;font-size:12px;padding:6px 2px}td input{font-size:12px;padding:6px 3px;width:49px!important}td:first-child{white-space:nowrap;font-weight:650}.scroll{overflow-x:auto}#details{padding:12px;border:1px solid var(--line);border-radius:10px;background:#0d1727;min-height:78px;line-height:1.7}.pill{display:inline-block;padding:3px 8px;border-radius:15px;background:#273a56;margin:3px;font-size:12px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.footer{font-size:12px;color:var(--muted);margin-top:12px}.toggle{display:flex;align-items:center;gap:5px;font-size:13px}.topright{display:flex;gap:8px;flex-wrap:wrap}.label{fill:#e5edf9;font-size:10px;text-anchor:middle;pointer-events:none}.zlabel{fill:#f2c976;font-size:12px;text-anchor:middle;pointer-events:none}.planet{cursor:grab}.planet:active{cursor:grabbing}.planet text{pointer-events:none;font-weight:700;font-size:12px;fill:#08111f;text-anchor:middle;dominant-baseline:central}.planet circle{stroke:#fff;stroke-width:1.3}.degree-label{font-size:10px;fill:#d9e4f5;text-anchor:middle;pointer-events:none}@media(max-width:1050px){main{grid-template-columns:1fr}#wheel{max-height:none}}@media(max-width:650px){main{padding:8px}.panel{padding:9px}header{padding:14px}h1{font-size:20px}}
+</style></head><body><header><div><h1>✦ Nakshatra Chakra Studio <small>v7</small></h1><small>27 Nakshatras · 108 Padas · 12 Rashis · Exact 360° planetary plotting</small></div><div class="topright"><button id="langToggle" title="Switch language">हिन्दी</button><button id="exportSvg">Export SVG</button><button id="saveJson">Save JSON</button><button id="loadJson">Load JSON</button><input type="file" id="fileInput" accept="application/json" hidden></div></header><main><section class="panel"><div class="toolbar"><button data-view="rings" class="active">Concentric rings</button><button data-view="sky">Zodiac wheel</button><label class="toggle"><input type="checkbox" id="padas" checked> Pada lines</label><label class="toggle"><input type="checkbox" id="labels" checked> Nakshatra labels</label><label class="toggle"><input type="checkbox" id="degrees" checked> Degree ticks</label></div><svg id="wheel" viewBox="0 0 800 800" role="img" aria-label="Interactive 360 degree Nakshatra wheel with draggable planets"></svg><div class="hint">Drag any planetary marker to update its exact longitude. Click a planet or its table row for details. 0° Aries is at the top; longitude increases clockwise.</div></section><section class="layout"><div class="panel"><h3 style="margin:0 0 8px">Planet & Ascendant positions</h3><div class="hint" style="margin-bottom:10px">Edit Rashi + D° M′ S″, or select a Nakshatra and Pada to jump to its start. All values use sidereal zodiac longitude as entered; no ephemeris is calculated.</div><div class="scroll"><table><thead><tr><th>Body</th><th>Rashi</th><th>°</th><th>′</th><th>″</th><th>Nakshatra</th><th>Pada</th></tr></thead><tbody id="rows"></tbody></table></div><div class="toolbar" style="margin-top:12px"><button id="reset">Reset sample</button><button id="clear">Clear planets</button></div></div><div class="panel"><h3 style="margin:0 0 10px">Selected position</h3><div id="details">Select a marker to inspect its position.</div><div class="footer">Precision: 1 arcsecond · 1 Nakshatra = 13°20′ · 1 Pada = 3°20′ · 1 Rashi = 30°. Rahu and Ketu are always exactly 180° apart; editing either automatically updates the other. Coordinates are zodiac positions, not physical star-map coordinates.</div></div></section><section class="panel" id="bhavaPanel" style="margin-top:18px"><div class="toolbar"><h2 style="margin:0;flex:1" id="bhavaTitle">Bhava Chalit · Equal House</h2><label class="toggle"><input id="relativeMode" type="checkbox" checked> <span id="relativeLabel">Ascendant at 0° (relative view)</span></label><label class="toggle"><input id="zoneMode" type="checkbox" checked> <span id="zoneLabel">Show ±15° influence zone</span></label><button id="exportBhava">Export Bhava SVG</button></div><p class="hint" id="bhavaHint">House 1 is centered on the Ascendant. Its boundaries are Asc − 15° and Asc + 15°. This is equal-house Bhava Chalit, not Sripati.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px"><div><h3 id="traditionalTitle">Traditional South Indian chart · Bhava placements</h3><svg id="traditional" viewBox="0 0 480 480" style="width:100%;max-width:480px;background:#0b1628;border-radius:12px" aria-label="Traditional South Indian bhava chart"></svg></div><div><h3 id="tableTitle">Bhava boundaries and planets</h3><div class="scroll"><table><thead><tr><th id="houseHead">Bhava</th><th id="centerHead">Center</th><th id="boundaryHead">Start → End</th><th id="planetHead">Planets</th></tr></thead><tbody id="bhavaRows"></tbody></table></div><p class="hint" id="bhavaNote">Traditional chart boxes are labeled by Bhava, not by Rashi. Planets retain their natal Rashi positions.</p></div></div></section></main><script>
+'use strict';
+const NS='http://www.w3.org/2000/svg',rashi=['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrischika','Dhanu','Makara','Kumbha','Meena'],nak=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const base=[['Asc','Asc','#f4d276',17.6],['Sun','Su','#ffb45c',35.25],['Moon','Mo','#e1e9ff',122.65],['Mars','Ma','#ff7777',182.45],['Mercury','Me','#74e3b0',45.15],['Jupiter','Ju','#e9c56e',264.25],['Venus','Ve','#f4a9df',329.5],['Saturn','Sa','#a9baf8',306.4],['Rahu','Ra','#b7a2f5',74.15],['Ketu','Ke','#c6b0a4',254.15]];
+let bodies=[],view='rings',selected='Moon',drag=null;const $=id=>document.getElementById(id),svg=$('wheel');
+const norm=x=>((x%360)+360)%360;const toSec=x=>Math.round(norm(x)*3600)%1296000;const deg=s=>s/3600;const loc=s=>{let t=((s%1296000)+1296000)%1296000;return {r:Math.floor(t/108000),d:Math.floor(t%108000/3600),m:Math.floor(t%3600/60),s:t%60,n:Math.floor(t/48000),p:Math.floor(t%48000/12000)+1}};
+function node(tag,attrs={},parent=svg){let e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));parent.appendChild(e);return e}function point(angle,r){let a=(angle-90)*Math.PI/180;return [400+r*Math.cos(a),400+r*Math.sin(a)]}function path(a,b,inner,outer){let p=point(a,outer),q=point(b,outer),u=point(b,inner),v=point(a,inner),large=b-a>180?1:0;return `M${p} A${outer} ${outer} 0 ${large} 1 ${q} L${u} A${inner} ${inner} 0 ${large} 0 ${v} Z`};
+function line(a,r1,r2,color,width=1,opacity=1){let p=point(a,r1),q=point(a,r2);node('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:color,'stroke-width':width,opacity})}function textAt(a,r,t,cls){let p=point(a,r);let e=node('text',{x:p[0],y:p[1],class:cls,'dominant-baseline':'central'});e.textContent=t;return e}
+function render(){svg.replaceChildren();node('circle',{cx:400,cy:400,r:389,fill:'#0b1628',stroke:'#536886','stroke-width':2});const rings=view==='rings';const zone=rings?{r1:320,r2:383,n1:218,n2:318,p1:188,p2:216,planet:150}:{r1:318,r2:382,n1:238,n2:317,p1:228,p2:238,planet:290};
+for(let i=0;i<12;i++){node('path',{d:path(i*30,(i+1)*30,zone.r1,zone.r2),fill:i%2?'#283953':'#21334c',stroke:'#60728c','stroke-width':.7});textAt(i*30+15,(zone.r1+zone.r2)/2,rashi[i],'zlabel')}
+for(let i=0;i<27;i++){let a=i*360/27,b=(i+1)*360/27;node('path',{d:path(a,b,zone.n1,zone.n2),fill:i%2?'#172d42':'#1d354b',stroke:'#60728c','stroke-width':.65});if($('labels').checked){let t=textAt((a+b)/2,(zone.n1+zone.n2)/2,nak[i],'label');let p=point((a+b)/2,(zone.n1+zone.n2)/2);t.setAttribute('transform',`rotate(${(a+b)/2-90},${p[0]},${p[1]})`);if((a+b)/2>180)t.setAttribute('transform',`rotate(${(a+b)/2+90},${p[0]},${p[1]})`)}}
+if($('padas').checked){for(let i=0;i<108;i++){let a=i*360/108;line(a,zone.p1,zone.p2,i%4===0?'#dfbf78':'#57728e',i%4===0?1.5:.7);if(rings&&i%4===0)textAt(a+360/216,(zone.p1+zone.p2)/2,String(i/4+1),'degree-label')}}
+if($('degrees').checked){for(let i=0;i<360;i+=5)line(i,383,i%30===0?397:i%10===0?392:387,i%30===0?'#e8bf70':'#667f9c',i%30===0?2:1);for(let i=0;i<360;i+=30)textAt(i,369,String(i)+'°','degree-label')}
+node('circle',{cx:400,cy:400,r:rings?180:205,fill:'#0b1628',stroke:'#344b68'});let center=node('text',{x:400,y:385,'text-anchor':'middle',fill:'#eac679','font-size':25,'font-weight':700});center.textContent=rings?'Nakshatra Chakra':'Zodiac Wheel';let sub=node('text',{x:400,y:411,'text-anchor':'middle',fill:'#a2b3cd','font-size':14});sub.textContent='360° • Sidereal • 27 Nakshatras';
+let groups={};bodies.forEach(b=>{if(b.sec===null)return;let angle=Math.round(b.sec/3600*10)/10;(groups[angle]??=[]).push(b)});for(const [a,group] of Object.entries(groups)){group.forEach((b,j)=>{let angle=deg(b.sec),r=zone.planet-(j%3)*29;let p=point(angle,r),g=node('g',{class:'planet','data-name':b.name,tabindex:0,role:'button','aria-label':b.name+' at '+angle.toFixed(3)+' degrees'});if(b.name===selected)node('circle',{cx:p[0],cy:p[1],r:20,fill:'none',stroke:'#fff','stroke-width':2,'stroke-dasharray':'4 3'},g);node('circle',{cx:p[0],cy:p[1],r:16,fill:b.color},g);let t=node('text',{x:p[0],y:p[1]},g);t.textContent=b.short;g.addEventListener('pointerdown',e=>{drag=b.name;selected=b.name;svg.setPointerCapture(e.pointerId);showDetails();render()});g.addEventListener('click',()=>{selected=b.name;showDetails();render()})})}
+}
+function makeRows(){const body=$('rows');body.replaceChildren();bodies.forEach(b=>{let tr=document.createElement('tr');tr.dataset.name=b.name;let name=document.createElement('td');name.innerHTML=`<span class="dot" style="background:${b.color}"></span>${b.name}`;tr.append(name);let r=document.createElement('select'),n=document.createElement('select'),p=document.createElement('select');rashi.forEach((x,i)=>r.add(new Option(x,i)));nak.forEach((x,i)=>n.add(new Option(x,i)));for(let i=1;i<=4;i++)p.add(new Option(i,i));let d=document.createElement('input'),m=document.createElement('input'),s=document.createElement('input');[d,m,s].forEach(x=>{x.type='number';x.min=0;x.step=1});d.max=29;m.max=59;s.max=59;[r,d,m,s,n,p].forEach(el=>{let td=document.createElement('td');td.append(el);tr.append(td)});body.append(tr);b.controls={r,d,m,s,n,p};[r,d,m,s].forEach(el=>el.addEventListener('change',()=>{let vals=[+d.value,+m.value,+s.value];if(vals.some(v=>!Number.isInteger(v))||vals.some(v=>v<0)||vals[0]>29||vals[1]>59||vals[2]>59){alert('Enter whole numbers: degrees 0–29, minutes 0–59, seconds 0–59.');syncRows();return}b.sec=+r.value*108000+vals[0]*3600+vals[1]*60+vals[2];selected=b.name;update()}));n.addEventListener('change',()=>{b.sec=+n.value*48000;selected=b.name;update()});p.addEventListener('change',()=>{let current=b.sec===null?0:b.sec;b.sec=Math.floor(current/48000)*48000+(+p.value-1)*12000;selected=b.name;update()});tr.addEventListener('click',()=>{selected=b.name;showDetails()})})}
+function syncRows(){bodies.forEach(b=>{let c=b.controls;if(!c)return;let l=loc(b.sec??0);c.r.value=l.r;c.d.value=l.d;c.m.value=l.m;c.s.value=l.s;c.n.value=l.n;c.p.value=l.p;c.n.disabled=b.sec===null;c.p.disabled=b.sec===null})}
+function showDetails(){let b=bodies.find(x=>x.name===selected);if(!b||b.sec===null){$('details').textContent='Select a planet with a position to inspect it.';return}let l=loc(b.sec);$('details').innerHTML=`<b style="color:${b.color}">${b.name}</b> · ${rashi[l.r]} ${l.d}° ${l.m}′ ${l.s}″<br><b>${nak[l.n]}</b> · Pada ${l.p}<br>Absolute longitude: <b>${Math.floor(b.sec/3600)}° ${Math.floor(b.sec%3600/60)}′ ${b.sec%60}″</b> (${deg(b.sec).toFixed(6)}°)`}
+function enforceNodes(source=selected){
+ const rahu=bodies.find(b=>b.name==='Rahu'),ketu=bodies.find(b=>b.name==='Ketu');
+ if(!rahu||!ketu)return;
+ const primary=source==='Ketu'?ketu:rahu,opposite=source==='Ketu'?rahu:ketu;
+ if(primary.sec===null){if(opposite.sec!==null)primary.sec=(opposite.sec+648000)%1296000;return}
+ opposite.sec=(primary.sec+648000)%1296000;
+}
+function update(){enforceNodes();syncRows();showDetails();render()}function reset(){bodies=base.map(([name,short,color,val])=>({name,short,color,sec:toSec(val)}));makeRows();update()}
+svg.addEventListener('pointermove',e=>{if(!drag)return;let p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;let matrix=svg.getScreenCTM();if(!matrix)return;p=p.matrixTransform(matrix.inverse());let angle=norm(Math.atan2(p.y-400,p.x-400)*180/Math.PI+90);let b=bodies.find(x=>x.name===drag);if(b){b.sec=toSec(angle);selected=b.name;update()}});svg.addEventListener('pointerup',()=>drag=null);svg.addEventListener('pointercancel',()=>drag=null);
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));render()});['padas','labels','degrees'].forEach(id=>$(id).onchange=render);$('reset').onclick=reset;$('clear').onclick=()=>{bodies.forEach(b=>b.sec=null);update()};
+function download(name,content,type){let a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}$('exportSvg').onclick=()=>{let clone=svg.cloneNode(true);clone.setAttribute('xmlns',NS);download('nakshatra-chakra.svg',new XMLSerializer().serializeToString(clone),'image/svg+xml')};$('saveJson').onclick=()=>download('nakshatra-positions.json',JSON.stringify({version:4,view,bodies:bodies.map(({name,sec})=>({name,sec}))},null,2),'application/json');$('loadJson').onclick=()=>$('fileInput').click();$('fileInput').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(!Array.isArray(data.bodies))throw Error('Invalid format');data.bodies.forEach(x=>{let b=bodies.find(y=>y.name===x.name);if(b&&(x.sec===null||(Number.isInteger(x.sec)&&x.sec>=0&&x.sec<1296000)))b.sec=x.sec});enforceNodes(data.bodies.some(x=>x.name==='Rahu'&&x.sec!==null)?'Rahu':'Ketu');if(['rings','sky'].includes(data.view))view=data.view;document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));update()}catch(err){alert('Unable to load: '+err.message)}e.target.value=''};
+reset();
+
+// Hindi / English interface, including SVG labels and controls.
+const hiRashi=['मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुम्भ','मीन'];
+const hiNak=['अश्विनी','भरणी','कृत्तिका','रोहिणी','मृगशिरा','आर्द्रा','पुनर्वसु','पुष्य','आश्लेषा','मघा','पूर्वाफाल्गुनी','उत्तराफाल्गुनी','हस्त','चित्रा','स्वाती','विशाखा','अनुराधा','ज्येष्ठा','मूल','पूर्वाषाढ़ा','उत्तराषाढ़ा','श्रवण','धनिष्ठा','शतभिषा','पूर्वाभाद्रपदा','उत्तराभाद्रपदा','रेवती'];
+const hiBodies={Asc:'लग्न',Sun:'सूर्य',Moon:'चन्द्र',Mars:'मंगल',Mercury:'बुध',Jupiter:'गुरु',Venus:'शुक्र',Saturn:'शनि',Rahu:'राहु',Ketu:'केतु'};
+const hiShort={Asc:'ल',Sun:'सू',Moon:'चं',Mars:'मं',Mercury:'बु',Jupiter:'गु',Venus:'शु',Saturn:'श',Rahu:'रा',Ketu:'के'};
+const translations=[
+ ['27 Nakshatras · 108 Padas · 12 Rashis · Exact 360° planetary plotting','२७ नक्षत्र · १०८ पद · १२ राशियाँ · सटीक ३६०° ग्रह स्थिति'],
+ ['Export SVG','SVG निर्यात'],['Save JSON','JSON सहेजें'],['Load JSON','JSON खोलें'],
+ ['Concentric rings','संकेंद्रित वलय'],['Zodiac wheel','राशिचक्र'],['Pada lines','पद रेखाएँ'],['Nakshatra labels','नक्षत्र नाम'],['Degree ticks','अंश चिह्न'],
+ ['Drag any planetary marker to update its exact longitude. Click a planet or its table row for details. 0° Aries is at the top; longitude increases clockwise.','किसी भी ग्रह को खींचकर उसकी सटीक स्थिति बदलें। विवरण के लिए ग्रह या तालिका की पंक्ति चुनें। ०° मेष ऊपर है; अंश दक्षिणावर्त बढ़ते हैं।'],
+ ['Planet & Ascendant positions','ग्रह एवं लग्न की स्थितियाँ'],
+ ['Edit Rashi + D° M′ S″, or select a Nakshatra and Pada to jump to its start. All values use sidereal zodiac longitude as entered; no ephemeris is calculated.','राशि और अंश° कला′ विकला″ बदलें, या नक्षत्र और पद चुनकर उसके आरंभ पर जाएँ। सभी स्थितियाँ निरयन राशि-चक्र में दर्ज की जाती हैं; स्वतः ग्रह-गणना नहीं होती।'],
+ ['Body','ग्रह'],['Rashi','राशि'],['Nakshatra','नक्षत्र'],['Pada','पद'],['Reset sample','नमूना पुनः'],['Clear planets','ग्रह हटाएँ'],['Selected position','चयनित स्थिति'],['Select a marker to inspect its position.','स्थिति जानने के लिए ग्रह चुनें।'],
+ ['Precision: 1 arcsecond · 1 Nakshatra = 13°20′ · 1 Pada = 3°20′ · 1 Rashi = 30°. Rahu and Ketu are always exactly 180° apart; editing either automatically updates the other. Coordinates are zodiac positions, not physical star-map coordinates.','सटीकता: १ विकला · १ नक्षत्र = १३°२०′ · १ पद = ३°२०′ · १ राशि = ३०°। राहु और केतु सदैव ठीक १८०° विपरीत रहते हैं; एक को बदलने पर दूसरा स्वतः बदलता है। ये राशिचक्रीय स्थितियाँ हैं, वास्तविक तारामंडल का मानचित्र नहीं।']];
+let language='en';
+const originalTextNodes=[];
+const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+while(walker.nextNode()){const n=walker.currentNode;if(n.parentElement?.closest('script,style'))continue;const original=n.nodeValue;const t=original.trim();if(translations.some(x=>x[0]===t))originalTextNodes.push({n,original,t});}
+function setLanguage(lang){
+ language=lang;document.documentElement.lang=lang;
+ $('langToggle').textContent=lang==='hi'?'English':'हिन्दी';
+ originalTextNodes.forEach(({n,original,t})=>{const pair=translations.find(x=>x[0]===t);n.nodeValue=lang==='hi'?original.replace(t,pair[1]):original;});
+ rashi.splice(0,rashi.length,...(lang==='hi'?hiRashi:enRashi));nak.splice(0,nak.length,...(lang==='hi'?hiNak:enNak));
+ bodies.forEach(b=>{b.short=lang==='hi'?hiShort[b.name]:base.find(x=>x[0]===b.name)[1]});
+ makeRows();update();
+ document.querySelectorAll('#rows tr').forEach(tr=>{const b=bodies.find(x=>x.name===tr.dataset.name);if(b)tr.cells[0].lastChild.textContent=lang==='hi'?hiBodies[b.name]:b.name;});
+}
+const enRashi=[...rashi],enNak=[...nak];
+$('langToggle').onclick=()=>setLanguage(language==='en'?'hi':'en');
+const priorRender=render;
+render=function(){priorRender();if(language==='hi'){
+ svg.querySelectorAll('.planet').forEach(g=>{const b=bodies.find(x=>x.name===g.dataset.name);if(b){g.querySelector('text').textContent=hiShort[b.name];g.setAttribute('aria-label',hiBodies[b.name]);}});
+ const center=svg.querySelector('text[font-size="25"]');if(center)center.textContent=view==='rings'?'नक्षत्र चक्र':'राशि चक्र';
+ const sub=svg.querySelector('text[font-size="14"]');if(sub)sub.textContent='३६०° • निरयन • २७ नक्षत्र';
+ }};
+const priorDetails=showDetails;
+showDetails=function(){priorDetails();if(language==='hi'){
+ let b=bodies.find(x=>x.name===selected);if(!b||b.sec===null){$('details').textContent='स्थिति जानने के लिए ग्रह चुनें।';return;}
+ let l=loc(b.sec);$('details').innerHTML=`<b style="color:${b.color}">${hiBodies[b.name]}</b> · ${rashi[l.r]} ${l.d}° ${l.m}′ ${l.s}″<br><b>${nak[l.n]}</b> · पद ${l.p}<br>पूर्ण देशांतर: <b>${Math.floor(b.sec/3600)}° ${Math.floor(b.sec%3600/60)}′ ${b.sec%60}″</b> (${deg(b.sec).toFixed(6)}°)`;
+ }};
+
+// v5: Ascendant-relative equal-house Bhava Chalit. Original sidereal longitudes remain unchanged.
+const bhNS='http://www.w3.org/2000/svg';
+function ascSec(){return bodies.find(b=>b.name==='Asc')?.sec ?? null}
+function bhavaOf(sec){const a=ascSec();return a===null||sec===null?null:Math.floor(norm(deg(sec-a)+15)/30)+1}
+function fmtLongitude(sec){let x=((Math.round(sec)%1296000)+1296000)%1296000;return `${Math.floor(x/3600)}°${String(Math.floor(x%3600/60)).padStart(2,'0')}′${String(x%60).padStart(2,'0')}″`}
+function bhLabel(b){return language==='hi'?hiBodies[b.name]:b.name}
+function renderBhava(){
+ const a=ascSec(), tr=$('traditional');tr.replaceChildren();$('bhavaRows').replaceChildren();
+ const hi=language==='hi';
+ $('bhavaTitle').textContent=hi?'भाव चलित · समभाव पद्धति':'Bhava Chalit · Equal House';
+ $('relativeLabel').textContent=hi?'लग्न को ०° मानें':'Ascendant at 0° (relative view)';
+ $('zoneLabel').textContent=hi?'±१५° प्रभाव क्षेत्र दिखाएँ':'Show ±15° influence zone';
+ $('traditionalTitle').textContent=hi?'पारंपरिक दक्षिण भारतीय भाव कुंडली':'Traditional South Indian chart · Bhava placements';
+ $('tableTitle').textContent=hi?'भाव सीमाएँ और ग्रह':'Bhava boundaries and planets';
+ $('houseHead').textContent=hi?'भाव':'Bhava';$('centerHead').textContent=hi?'मध्य':'Center';$('boundaryHead').textContent=hi?'आरंभ → अंत':'Start → End';$('planetHead').textContent=hi?'ग्रह':'Planets';
+ $('bhavaHint').textContent=hi?'प्रथम भाव का मध्य लग्न है। इसकी सीमाएँ लग्न −१५° और लग्न +१५° हैं। यह समभाव पद्धति है, श्रीपति नहीं।':'House 1 is centered on the Ascendant. Its boundaries are Asc − 15° and Asc + 15°. This is equal-house Bhava Chalit, not Sripati.';
+ $('bhavaNote').textContent=hi?'खानों में भाव क्रमांक हैं, राशियाँ नहीं। ग्रहों की मूल राशि स्थिति नहीं बदलती।':'Chart boxes are labeled by Bhava, not Rashi. Natal Rashi positions do not change.';
+ if(a===null){$('bhavaRows').innerHTML=`<tr><td colspan="4">${hi?'भाव गणना के लिए लग्न दर्ज करें।':'Enter Ascendant longitude to calculate Bhavas.'}</td></tr>`;return}
+ // South Indian-style 4x4 perimeter, ordered clockwise starting at top left.
+ const cells=[[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0]];
+ const mk=(tag,attrs={},txt)=>{let el=document.createElementNS(bhNS,tag);for(let [k,v] of Object.entries(attrs))el.setAttribute(k,v);if(txt!==undefined)el.textContent=txt;tr.append(el);return el};
+ mk('rect',{x:5,y:5,width:470,height:470,fill:'#0b1628',stroke:'#7185a3','stroke-width':2});
+ for(let i=1;i<4;i++){mk('line',{x1:5+i*117.5,y1:5,x2:5+i*117.5,y2:475,stroke:'#60728c'});mk('line',{x1:5,y1:5+i*117.5,x2:475,y2:5+i*117.5,stroke:'#60728c'})}
+ mk('rect',{x:123,y:123,width:234,height:234,fill:'#0b1628',stroke:'#60728c'});
+ mk('text',{x:240,y:222,fill:'#e9ba65','text-anchor':'middle','font-size':22},hi?'भाव चलित':'BHAVA CHALIT');
+ mk('text',{x:240,y:248,fill:'#a2b3cd','text-anchor':'middle','font-size':13},hi?'लग्न मध्य = ०°':'ASC CENTER = 0°');
+ mk('text',{x:240,y:275,fill:'#a2b3cd','text-anchor':'middle','font-size':13},fmtLongitude(a));
+ cells.forEach(([row,col],i)=>{let cx=5+col*117.5,cy=5+row*117.5;let h=i+1;
+ mk('text',{x:cx+10,y:cy+20,fill:'#e9ba65','font-size':15,'font-weight':'bold'},`${hi?'भाव ':'H'}${h}`);
+ let ps=bodies.filter(b=>b.sec!==null&&bhavaOf(b.sec)===h);
+ ps.forEach((b,j)=>mk('text',{x:cx+8,y:cy+40+j*16,fill:b.color,'font-size':13},bhLabel(b)));
+ let center=norm(deg(a)+(h-1)*30),start=norm(center-15),end=norm(center+15);
+ let rowEl=document.createElement('tr');[String(h),fmtLongitude(center*3600),`${fmtLongitude(start*3600)} → ${fmtLongitude(end*3600)}`,ps.map(b=>bhLabel(b)).join(', ')||'—'].forEach(v=>{let td=document.createElement('td');td.textContent=v;rowEl.append(td)});$('bhavaRows').append(rowEl);
+ });
+}
+const bhavaPriorRender=render;
+render=function(){bhavaPriorRender();const a=ascSec();if(a!==null&&$('zoneMode').checked){
+ const relative=$('relativeMode').checked;
+ // Arc highlights the Ascendant's ±15 degree zone on the existing zodiac wheel.
+ const start=norm(deg(a)-15),end=start+30;
+ const highlight=node('path',{d:path(start,end,view==='rings'?178:205,view==='rings'?188:228),fill:'#f5c65b',opacity:0.75,'pointer-events':'none'});
+ const p=point(deg(a),view==='rings'?181:216);node('circle',{cx:p[0],cy:p[1],r:5,fill:'#fff0a4','pointer-events':'none'});
+ for(let h=0;h<12;h++){let angle=norm(deg(a)-15+h*30);line(angle,view==='rings'?165:205,view==='rings'?185:227,'#e9ba65',1.5,.85)}
+ }
+ if(a!==null&&$('relativeMode').checked){let label=node('text',{x:400,y:439,'text-anchor':'middle',fill:'#e9ba65','font-size':13,'pointer-events':'none'});label.textContent=(language==='hi'?'लग्न सापेक्ष ०°':'Asc relative 0°')+' · '+fmtLongitude(a)}
+ renderBhava();
+};
+$('relativeMode').onchange=render;$('zoneMode').onchange=render;
+$('exportBhava').onclick=()=>{let clone=$('traditional').cloneNode(true);clone.setAttribute('xmlns',bhNS);download('bhava-chalit-equal-house.svg',new XMLSerializer().serializeToString(clone),'image/svg+xml')};
+const bhavaSave=$('saveJson').onclick;
+$('saveJson').onclick=()=>download('nakshatra-bhava-positions.json',JSON.stringify({version:5,view,method:'equal-house-ascendant-centered',bodies:bodies.map(({name,sec})=>({name,sec}))},null,2),'application/json');
+render();
+</script><style>.sr-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:12px 0}.sr-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:#c7d6eb}.sr-controls input,.sr-controls select{background:#101e33;color:#f0f5ff;border:1px solid #52647c;border-radius:7px;padding:7px;max-width:190px}.sr-info{border:1px solid #40516a;border-radius:9px;padding:10px;margin:10px 0;color:#d9e4f5;font-size:13px}</style>
+<script>
+(function(){
+const panel=document.getElementById('bhavaPanel'),toolbar=panel.querySelector('.toolbar');
+const controls=document.createElement('div');controls.className='sr-controls';controls.innerHTML=`<label><span data-en="House system" data-hi="भाव पद्धति">House system</span><select id="houseMethod"><option value="equal">Equal house / समभाव</option><option value="sripati">Sripati / श्रीपति</option></select></label><label><span data-en="MC longitude (sidereal °)" data-hi="दशम भाव मध्य (निरयन अंश)">MC longitude (sidereal °)</span><input id="mcLongitude" type="number" min="0" max="359.999999" step="0.000001" value="287.6"></label><label><span data-en="Date (local)" data-hi="तिथि (स्थानीय)">Date (local)</span><input id="birthDate" type="date" value="2000-01-01"></label><label><span data-en="Time (local)" data-hi="समय (स्थानीय)">Time (local)</span><input id="birthTime" type="time" step="1" value="12:00:00"></label><label><span data-en="UTC offset (hours)" data-hi="यूटीसी अंतर (घंटे)">UTC offset (hours)</span><input id="utcOffset" type="number" min="-12" max="14" step="0.25" value="5.5"></label><label><span data-en="Latitude °N" data-hi="अक्षांश °उत्तर">Latitude °N</span><input id="birthLat" type="number" min="-89" max="89" step="0.0001" value="23.2599"></label><label><span data-en="Longitude °E" data-hi="देशांतर °पूर्व">Longitude °E</span><input id="birthLon" type="number" min="-180" max="180" step="0.0001" value="77.4126"></label><label><span data-en="Ayanamsha (degrees)" data-hi="अयनांश (अंश)">Ayanamsha (degrees)</span><input id="ayanamsha" type="number" step="0.000001" value="23.85"></label><button id="calculateAngles" type="button">Calculate Asc + MC / लग्न व दशम</button>`;
+toolbar.after(controls);
+const info=document.createElement('div');info.className='sr-info';controls.after(info);
+let method='equal',mc=287.6, cusps=[];
+const $x=id=>document.getElementById(id), mod=x=>(x%360+360)%360;
+function recalc(){let a=ascSec();if(a===null)return [];let asc=deg(a);if(method==='equal')return Array.from({length:12},(_,i)=>mod(asc+i*30));let c=Array(12);c[0]=asc;c[3]=mod(mc+180);c[6]=mod(asc+180);c[9]=mod(mc); // quadrant trisectors, preserving zodiac direction
+for(const [i,j] of [[0,3],[3,6],[6,9],[9,12]]){let from=c[i%12],to=j===12?asc+360:c[j];let arc=mod(to-from);for(let k=1;k<3;k++)c[i+k]=mod(from+arc*k/3)}return c;}
+function bounds(h){let i=h-1,prev=cusps[(i+11)%12],cur=cusps[i],next=cusps[(i+1)%12];return {start:mod(prev+mod(cur-prev)/2),center:cur,end:mod(cur+mod(next-cur)/2)}}
+const oldBhavaOf=bhavaOf;bhavaOf=function(sec){if(method==='equal')return oldBhavaOf(sec);if(sec===null||!cusps.length)return null;let x=deg(sec);for(let h=1;h<=12;h++){let b=bounds(h);if(mod(x-b.start)<mod(b.end-b.start))return h}return null};
+const oldRenderBhava=renderBhava;renderBhava=function(){cusps=recalc();oldRenderBhava();if(!cusps.length)return;const hi=language==='hi';$x('bhavaTitle').textContent=method==='sripati'?(hi?'भाव चलित · श्रीपति पद्धति':'Bhava Chalit · Sripati'):(hi?'भाव चलित · समभाव पद्धति':'Bhava Chalit · Equal House');$x('bhavaHint').textContent=method==='sripati'?(hi?'लग्न तथा दशम मध्य से चार चतुर्थांश बनाकर प्रत्येक का त्रिभाजन किया गया है; ग्रहों का भाव निकटवर्ती मध्य बिंदुओं की सीमाओं से तय होता है।':'Sripati: Ascendant and MC define four quadrants; each quadrant is trisected to obtain house centers. Boundaries are midpoints between adjacent centers.'):(hi?'लग्न प्रथम भाव का मध्य है; प्रत्येक भाव ३०° का है।':'Ascendant is the first-house center; every house spans 30°.');let rows=$x('bhavaRows');rows.replaceChildren();for(let h=1;h<=12;h++){let b=bounds(h),ps=bodies.filter(p=>p.sec!==null&&bhavaOf(p.sec)===h);let tr=document.createElement('tr');[h,fmtLongitude(b.center*3600),`${fmtLongitude(b.start*3600)} → ${fmtLongitude(b.end*3600)}`,ps.map(p=>hi?hiBodies[p.name]:p.name).join(', ')||'—'].forEach(v=>{let td=document.createElement('td');td.textContent=v;tr.append(td)});rows.append(tr)};info.textContent=(hi?'लग्न: ':'Asc: ')+fmtLongitude(ascSec())+' · MC: '+fmtLongitude(mc*3600)+' · '+(method==='sripati'?(hi?'श्रीपति (असमान भाव)':'Sripati (unequal houses)'):(hi?'समभाव':'Equal houses'))};
+const oldRender=render;render=function(){oldRender();if(method!=='sripati'||!cusps.length)return;let wheel=$x('wheel'); // additional Sripati house-boundary ticks in cyan
+for(let h=1;h<=12;h++){let b=bounds(h),a=b.start*Math.PI/180-Math.PI/2;let r1=view==='rings'?158:192,r2=view==='rings'?190:230;let el=document.createElementNS(NS,'line');for(let [k,v] of Object.entries({x1:400+r1*Math.cos(a),y1:400+r1*Math.sin(a),x2:400+r2*Math.cos(a),y2:400+r2*Math.sin(a),stroke:'#54e0db','stroke-width':3}))el.setAttribute(k,v);wheel.append(el)}};
+$x('houseMethod').onchange=e=>{method=e.target.value;render()};$x('mcLongitude').onchange=e=>{let n=Number(e.target.value);if(Number.isFinite(n)&&n>=0&&n<360){mc=n;render()}else alert('MC must be between 0 and 360 degrees')};
+$x('calculateAngles').onclick=()=>{try{let date=$x('birthDate').value,time=$x('birthTime').value,offset=+$x('utcOffset').value,lat=+$x('birthLat').value,lon=+$x('birthLon').value,aya=+$x('ayanamsha').value;if(!date||!time||![offset,lat,lon,aya].every(Number.isFinite)||Math.abs(lat)>=89.5||Math.abs(lon)>180||Math.abs(offset)>14)throw Error('Check date, time, coordinates and offset');let utc=Date.parse(date+'T'+time+'Z')-offset*3600000;if(!Number.isFinite(utc))throw Error('Invalid date/time');let jd=utc/86400000+2440587.5,T=(jd-2451545)/36525;let gmst=mod(280.46061837+360.98564736629*(jd-2451545)+.000387933*T*T-T*T*T/38710000);let lst=mod(gmst+lon)*Math.PI/180,eps=(23.439291-0.0130042*T)*Math.PI/180,phi=lat*Math.PI/180;let mcT=mod(Math.atan2(Math.sin(lst)/Math.cos(eps),Math.cos(lst))*180/Math.PI);let ascT=mod(Math.atan2(Math.cos(lst),-Math.sin(lst)*Math.cos(eps)-Math.tan(phi)*Math.sin(eps))*180/Math.PI);mc=mod(mcT-aya);let asc=mod(ascT-aya);$x('mcLongitude').value=mc.toFixed(6);let b=bodies.find(b=>b.name==='Asc');b.sec=toSec(asc);selected='Asc';update();info.textContent+=' · Approximate astronomical angles; manually supplied ayanamsha.'}catch(err){alert(err.message)}};
+const oldSave=$x('saveJson').onclick;$x('saveJson').onclick=()=>download('nakshatra-bhava-v6.json',JSON.stringify({version:6,view,method,mc,birth:{date:$x('birthDate').value,time:$x('birthTime').value,offset:$x('utcOffset').value,lat:$x('birthLat').value,lon:$x('birthLon').value,ayanamsha:$x('ayanamsha').value},bodies:bodies.map(({name,sec})=>({name,sec}))},null,2),'application/json');
+const oldLoad=$x('fileInput').onchange;$x('fileInput').onchange=async e=>{let f=e.target.files[0];if(!f)return;let content=await f.text();try{let d=JSON.parse(content);if(['equal','sripati'].includes(d.method)){method=d.method;$x('houseMethod').value=method}if(Number.isFinite(d.mc)){mc=mod(d.mc);$x('mcLongitude').value=mc.toFixed(6)}if(d.birth){for(let [k,id] of Object.entries({date:'birthDate',time:'birthTime',offset:'utcOffset',lat:'birthLat',lon:'birthLon',ayanamsha:'ayanamsha'}))if(d.birth[k]!==undefined)$x(id).value=d.birth[k]}}catch(_){}let dt=new DataTransfer();dt.items.add(new File([content],f.name,{type:'application/json'}));e.target.files=dt.files;oldLoad(e)};
+$x('exportBhava').onclick=()=>{let clone=$x('traditional').cloneNode(true);clone.setAttribute('xmlns',NS);download('bhava-chalit-'+method+'.svg',new XMLSerializer().serializeToString(clone),'image/svg+xml')};
+const oldSetLang=setLanguage;setLanguage=function(lang){oldSetLang(lang);document.querySelectorAll('[data-en]').forEach(e=>e.textContent=e.dataset[lang]);render()};
+render();
+})();
+</script>
+<script>
+// v7: selectable North Indian fixed-house diamond and South Indian Bhava layout.
+(function(){
+const target=document.getElementById('traditionalTitle');
+const selector=document.createElement('select');selector.id='chartStyle';selector.setAttribute('aria-label','Traditional chart style');selector.style.cssText='margin:0 0 10px;padding:9px;border-radius:8px;background:#14243a;color:#fff;border:1px solid #60728c';
+selector.innerHTML='<option value="north">North Indian / उत्तर भारतीय</option><option value="south">South Indian / दक्षिण भारतीय</option>';
+target.insertAdjacentElement('afterend',selector);
+const previous=renderBhava;
+function drawNorth(){
+ const chart=document.getElementById('traditional');chart.replaceChildren();
+ const hi=language==='hi', a=ascSec(), ns='http://www.w3.org/2000/svg';
+ function add(tag,attrs={},label){let e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(label!==undefined)e.textContent=label;chart.append(e);return e}
+ add('rect',{x:5,y:5,width:470,height:470,fill:'#0b1628',stroke:'#8c9fbd','stroke-width':2});
+ add('path',{d:'M240 5 L475 240 L240 475 L5 240 Z M5 5 L475 475 M475 5 L5 475',fill:'none',stroke:'#8c9fbd','stroke-width':1.7});
+ // North Indian house positions, fixed: 1 at top, 4 left, 7 bottom, 10 right.
+ const coords=[[240,92],[114,45],[48,116],[119,240],[48,365],[114,431],[240,386],[366,431],[432,365],[361,240],[432,116],[366,45]];
+ coords.forEach(([x,y],i)=>{
+  const h=i+1;
+  add('text',{x,y,fill:'#e9ba65','text-anchor':'middle','font-size':16,'font-weight':'bold'},String(h));
+  const ps=bodies.filter(b=>b.sec!==null&&bhavaOf(b.sec)===h);
+  const max=ps.length>3?10:12;
+  ps.forEach((b,j)=>add('text',{x,y:y+16+j*13,fill:b.color,'text-anchor':'middle','font-size':max},hi?(hiShort[b.name]||b.short):b.short));
+ });
+ if(a!==null)add('text',{x:240,y:155,fill:'#9cb4d1','text-anchor':'middle','font-size':11},(hi?'लग्न ':'Asc ')+fmtLongitude(a));
+}
+renderBhava=function(){previous();const north=selector.value==='north';target.textContent=north?(language==='hi'?'उत्तर भारतीय भाव चलित कुंडली':'North Indian Bhava Chalit chart'):(language==='hi'?'दक्षिण भारतीय भाव चलित कुंडली':'South Indian Bhava Chalit chart');if(north)drawNorth()};
+selector.onchange=()=>render();
+render();
+})();
+</script>
+</body></html>
