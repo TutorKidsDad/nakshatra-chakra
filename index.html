@@ -117,7 +117,7 @@ render=function(){bhavaPriorRender();const a=ascSec();if(false){
  const p=point(deg(a),view==='rings'?181:216);node('circle',{cx:p[0],cy:p[1],r:5,fill:'#fff0a4','pointer-events':'none'});
  for(let h=0;h<12;h++){let angle=norm(deg(a)-15+h*30);line(angle,view==='rings'?165:205,view==='rings'?185:227,'#e9ba65',1.5,.85)}
  }
- if(a!==null&&$('relativeMode').checked){let label=node('text',{x:400,y:439,'text-anchor':'middle',fill:'#e9ba65','font-size':13,'pointer-events':'none'});label.textContent=(language==='hi'?'लग्न सापेक्ष ०°':'Asc relative 0°')+' · '+fmtLongitude(a)}
+ if(a!==null&&$('relativeMode').checked){let label=node('text',{x:400,y:462,'text-anchor':'middle',fill:'#e9ba65','font-size':13,'pointer-events':'none'});label.textContent=(language==='hi'?'लग्न सापेक्ष ०°':'Asc relative 0°')+' · '+fmtLongitude(a)}
  renderBhava();
 };
 $('relativeMode').onchange=render;$('zoneMode').onchange=render;
